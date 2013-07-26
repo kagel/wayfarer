@@ -17,6 +17,7 @@ import static com.wavedroid.wayfarer.WayfarerProperties.getClientId;
 import static com.wavedroid.wayfarer.WayfarerProperties.getClientSecret;
 import static com.wavedroid.wayfarer.WayfarerProperties.getRedirectUrl;
 import static com.wavedroid.wayfarer.WayfarerProperties.getStartVenueId;
+import static com.wavedroid.wayfarer.WayfarerProperties.getUserId;
 import static com.wavedroid.wayfarer.WayfarerProperties.isDebug;
 
 /**
@@ -33,10 +34,20 @@ public class Wayfarer {
         FoursquareApi api = new FoursquareApi(getClientId(), getClientSecret(), getRedirectUrl());
         api.setoAuthToken(getAccessToken());
 
-        Result<CompleteVenue> venueResult = api.venue(getStartVenueId());
-        CompleteVenue venue = venueResult.getResult();
+        Checkin lastCheckin = FoursquareUtils.getLastCheckin(api, getUserId());
+        CompactVenue venue;
+        if (lastCheckin != null) {
+            venue = lastCheckin.getVenue();
+        } else {
+            Result<CompleteVenue> venueResult = api.venue(getStartVenueId());
+            venue = venueResult.getResult();
+        }
+
         Random rnd = new Random(Math.abs(Wayfarer.class.hashCode()));
         while (!Thread.interrupted()) {
+
+            venue = nextVenue(api, rnd, venue, latOffset, lonOffset, 0);
+
             if (!isDebug()) {
                 Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
                 if (checkinResult.getMeta().getCode() != 200) {
@@ -44,15 +55,13 @@ public class Wayfarer {
                 }
             }
 
-            venue = nextVenue(api, rnd, venue, latOffset, lonOffset, 0);
-
             if (!isDebug())
                 Thread.sleep(rnd.nextInt(1440000) + 360000);
         }
         System.out.println("Starved to death :(");
     }
 
-    private static CompleteVenue nextVenue(FoursquareApi api, Random rnd, CompleteVenue venue, double latOffset, double lonOffset, int counter) throws FoursquareApiException {
+    private static CompleteVenue nextVenue(FoursquareApi api, Random rnd, CompactVenue venue, double latOffset, double lonOffset, int counter) throws FoursquareApiException {
         System.out.println(tab(counter) + "searching for next venue, current venue: " + printVenue(venue) + ", lat step: " + latOffset + ", lon step: " + lonOffset);
         if (counter > 20) {
             Thread.currentThread().interrupt();
@@ -89,7 +98,7 @@ public class Wayfarer {
         return result;
     }
 
-    private static String printVenue(CompleteVenue venue) {
+    private static String printVenue(CompactVenue venue) {
         Location loc = venue.getLocation();
         if (loc == null) return venue.getName();
         return venue.getName() + " [" + loc.getCity() + ", " + loc.getCountry() + "]";
@@ -101,7 +110,7 @@ public class Wayfarer {
         return new String(b);
     }
 
-    private static String getLatLon(CompleteVenue venue, double latOffset, double lonOffset) {
+    private static String getLatLon(CompactVenue venue, double latOffset, double lonOffset) {
         if (venue == null) return "";
         Location loc = venue.getLocation();
         if (loc == null) return "";

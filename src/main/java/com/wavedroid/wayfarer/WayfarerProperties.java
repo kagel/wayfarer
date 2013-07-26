@@ -26,6 +26,7 @@ public class WayfarerProperties {
     private static String accessToken;
     private static String redirectUrl;
     private static String startVenueId;
+    private static String userId;
 
     public static boolean isDebug() {
         return Boolean.valueOf(debug);
@@ -51,4 +52,7 @@ public class WayfarerProperties {
         return startVenueId;
     }
 
+    public static String getUserId() {
+        return userId;
+    }
 }
