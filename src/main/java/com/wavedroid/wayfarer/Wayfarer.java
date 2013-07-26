@@ -118,5 +118,4 @@ public class Wayfarer {
         if (loc.getLng() == null) return "";
         return ((loc.getLat() + latOffset) + "," + (loc.getLng() + lonOffset));
     }
-
 }
