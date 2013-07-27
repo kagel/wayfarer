@@ -1,7 +1,9 @@
 package com.wavedroid.wayfarer;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
@@ -24,6 +26,8 @@ import static com.wavedroid.wayfarer.WayfarerProperties.isDebug;
  * @author DKhvatov
  */
 public class Wayfarer {
+
+    private static final Set<String> cache = new HashSet<>();
 
 
     public static void main(String[] args) throws FoursquareApiException, InterruptedException {
@@ -52,7 +56,8 @@ public class Wayfarer {
                 Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
                 if (checkinResult.getMeta().getCode() != 200) {
                     System.out.println("checkin error: " + checkinResult.getMeta().getErrorDetail() + "(" + checkinResult.getMeta().getErrorType() + ")");
-                }
+                } else
+                    cache.add(venue.getId());
             }
 
             if (!isDebug())
@@ -87,15 +92,24 @@ public class Wayfarer {
             }
             return nextVenue(api, rnd, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
         }
-        CompactVenue compactVenue = venues[rnd.nextInt(venues.length)];
-        Result<CompleteVenue> venueResult = api.venue(compactVenue.getId());
-        CompleteVenue result = venueResult.getResult();
-        if (result.getBeenHere().getCount() > 0) {
-            System.out.println(tab(counter) + "Never repeat yourself");
-            return nextVenue(api, rnd, venue, latOffset, lonOffset, ++counter);
+
+        CompleteVenue result;
+        for (CompactVenue compactVenue : venues) {
+            Result<CompleteVenue> venueResult = api.venue(compactVenue.getId());
+            result = venueResult.getResult();
+
+            if (cache.contains(compactVenue.getId()) || result.getBeenHere().getCount() > 0) {
+                System.out.println(tab(counter) + "has been before: " + result.getName());
+                cache.add(compactVenue.getId());
+                continue;
+            }
+
+            System.out.println(tab(counter) + "next venue: " + result.getName());
+            return result;
         }
-        System.out.println(tab(counter) + "next venue: " + result.getName());
-        return result;
+
+        System.out.println(tab(counter) + "Nothing found, increasing step");
+        return nextVenue(api, rnd, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
     }
 
     private static String printVenue(CompactVenue venue) {
