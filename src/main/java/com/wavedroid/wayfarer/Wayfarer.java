@@ -50,7 +50,7 @@ public class Wayfarer {
         Random rnd = new Random(Math.abs(Wayfarer.class.hashCode()));
         while (!Thread.interrupted()) {
 
-            venue = nextVenue(api, rnd, venue, latOffset, lonOffset, 0);
+            venue = nextVenue(api, venue, latOffset, lonOffset, 0);
 
             if (!isDebug()) {
                 Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
@@ -61,12 +61,12 @@ public class Wayfarer {
             }
 
             if (!isDebug())
-                Thread.sleep(rnd.nextInt(1440000) + 360000);
+                Thread.sleep(rnd.nextInt(2880000) + 720000);
         }
         System.out.println("Starved to death :(");
     }
 
-    private static CompleteVenue nextVenue(FoursquareApi api, Random rnd, CompactVenue venue, double latOffset, double lonOffset, int counter) throws FoursquareApiException {
+    private static CompleteVenue nextVenue(FoursquareApi api, CompactVenue venue, double latOffset, double lonOffset, int counter) throws FoursquareApiException {
         System.out.println(tab(counter) + "searching for next venue, current venue: " + printVenue(venue) + ", lat step: " + latOffset + ", lon step: " + lonOffset);
         if (counter > 20) {
             Thread.currentThread().interrupt();
@@ -81,7 +81,7 @@ public class Wayfarer {
                 Thread.sleep(10000 * counter);
             } catch (InterruptedException ignored) {
             }
-            return nextVenue(api, rnd, venue, latOffset, lonOffset, ++counter);
+            return nextVenue(api, venue, latOffset, lonOffset, ++counter);
         }
         CompactVenue[] venues = searchResult.getVenues();
         if (venues.length == 0) {
@@ -90,7 +90,7 @@ public class Wayfarer {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
             }
-            return nextVenue(api, rnd, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
+            return nextVenue(api, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
         }
 
         CompleteVenue result;
@@ -109,7 +109,7 @@ public class Wayfarer {
         }
 
         System.out.println(tab(counter) + "Nothing found, increasing step");
-        return nextVenue(api, rnd, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
+        return nextVenue(api, venue, latOffset * 1.25, lonOffset * 1.25, ++counter);
     }
 
     private static String printVenue(CompactVenue venue) {
