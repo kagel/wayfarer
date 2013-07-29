@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.wavedroid.wayfarer.FoursquareUtils;
-import com.wavedroid.wayfarer.filters.VenueFilter;
+import com.wavedroid.wayfarer.ambitions.Ambition;
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
@@ -17,10 +17,10 @@ import fi.foyt.foursquare.api.entities.CompleteVenue;
  */
 public abstract class SelectiveStrategy implements Strategy {
 
-    private final VenueFilter[] filters;
+    private final Ambition[] ambitions;
 
-    public SelectiveStrategy(VenueFilter[] filters) {
-        this.filters = filters;
+    public SelectiveStrategy(Ambition[] ambitions) {
+        this.ambitions = ambitions;
     }
 
     @Override
@@ -40,12 +40,12 @@ public abstract class SelectiveStrategy implements Strategy {
 
         CompactVenue[] venues = nextVenues(api, venue, counter, latOffset, lonOffset);
         List<CompactVenue> filteredVenues = new LinkedList<>();
-        for (VenueFilter filter : getFilters()) {
+        for (Ambition ambition : getAmbitions()) {
             for (CompactVenue v : venues) {
-                if (filter.filter(api, v))
+                if (ambition.fulfill(api, v))
                     filteredVenues.add(v);
                 else
-                    System.out.println(tab(counter) + filter.msg(v));
+                    System.out.println(tab(counter) + ambition.msg(v));
             }
         }
 
@@ -75,7 +75,7 @@ public abstract class SelectiveStrategy implements Strategy {
 
 
     @Override
-    public VenueFilter[] getFilters() {
-        return filters;
+    public Ambition[] getAmbitions() {
+        return ambitions;
     }
 }

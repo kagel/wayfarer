@@ -1,6 +1,6 @@
 package com.wavedroid.wayfarer.strategies;
 
-import com.wavedroid.wayfarer.filters.VenueFilter;
+import com.wavedroid.wayfarer.ambitions.Ambition;
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.entities.CompactVenue;
@@ -13,6 +13,6 @@ public interface Strategy {
 
     CompleteVenue nextVenue(FoursquareApi api, CompactVenue venue, int counter, Number... params) throws FoursquareApiException;
 
-    VenueFilter[] getFilters();
+    Ambition[] getAmbitions();
 
 }

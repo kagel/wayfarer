@@ -1,6 +1,6 @@
 package com.wavedroid.wayfarer.manners;
 
-import com.wavedroid.wayfarer.filters.VenueFilter;
+import com.wavedroid.wayfarer.ambitions.Ambition;
 import com.wavedroid.wayfarer.strategies.NorthEast;
 import com.wavedroid.wayfarer.strategies.Strategy;
 
@@ -9,14 +9,14 @@ import com.wavedroid.wayfarer.strategies.Strategy;
  */
 public class Straightforward implements Manner {
 
-    private VenueFilter[] filters;
+    private Ambition[] ambitions;
 
-    public Straightforward(VenueFilter[] filters) {
-        this.filters = filters;
+    public Straightforward(Ambition[] ambitions) {
+        this.ambitions = ambitions;
     }
 
     @Override
     public Strategy getStrategy() {
-        return new NorthEast(filters);
+        return new NorthEast(ambitions);
     }
 }

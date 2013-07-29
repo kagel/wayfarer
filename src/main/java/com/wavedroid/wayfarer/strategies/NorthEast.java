@@ -1,7 +1,7 @@
 package com.wavedroid.wayfarer.strategies;
 
 import com.wavedroid.wayfarer.FoursquareUtils;
-import com.wavedroid.wayfarer.filters.VenueFilter;
+import com.wavedroid.wayfarer.ambitions.Ambition;
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
@@ -13,8 +13,8 @@ import fi.foyt.foursquare.api.entities.VenuesSearchResult;
  */
 public class NorthEast extends SelectiveStrategy {
 
-    public NorthEast(VenueFilter[] filters) {
-        super(filters);
+    public NorthEast(Ambition[] ambitions) {
+        super(ambitions);
     }
 
     @Override
