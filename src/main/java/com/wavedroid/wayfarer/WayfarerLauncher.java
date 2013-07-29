@@ -1,6 +1,7 @@
 package com.wavedroid.wayfarer;
 
 import com.wavedroid.wayfarer.goals.Death;
+import com.wavedroid.wayfarer.strategies.NorthEast;
 import fi.foyt.foursquare.api.FoursquareApiException;
 
 /**
@@ -9,6 +10,6 @@ import fi.foyt.foursquare.api.FoursquareApiException;
 public class WayfarerLauncher {
 
     public static void main(String[] args) throws FoursquareApiException, InterruptedException {
-        Wayfarer.start(new Death());
+        Wayfarer.start(new Death(), new NorthEast());
     }
 }
