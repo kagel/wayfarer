@@ -97,13 +97,15 @@ public class Wayfarer {
         for (CompactVenue compactVenue : venues) {
             Result<CompleteVenue> venueResult = api.venue(compactVenue.getId());
             result = venueResult.getResult();
-
+            if (result == null) {
+                System.out.println(tab(counter) + "null result for venue: " + compactVenue.getName());
+                continue;
+            }
             if (cache.contains(compactVenue.getId()) || result.getBeenHere().getCount() > 0) {
                 System.out.println(tab(counter) + "has been before: " + result.getName());
                 cache.add(compactVenue.getId());
                 continue;
             }
-
             System.out.println(tab(counter) + "next venue: " + result.getName());
             return result;
         }
