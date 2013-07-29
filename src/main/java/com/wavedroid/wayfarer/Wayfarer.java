@@ -28,9 +28,6 @@ public class Wayfarer {
 
     public static void start(Goal goal, Manner manner) throws FoursquareApiException, InterruptedException {
 
-        double latOffset = 0.005;
-        double lonOffset = 0.005;
-
         FoursquareApi api = new FoursquareApi(getClientId(), getClientSecret(), getRedirectUrl());
         api.setoAuthToken(getAccessToken());
 
@@ -48,10 +45,10 @@ public class Wayfarer {
             while (!goal.isComplete(venue)) {
 
                 Strategy strategy = manner.getStrategy();
-                venue = strategy.nextVenue(api, venue, latOffset, lonOffset, 0);
+                venue = strategy.nextVenue(api, venue, 0);
 
                 if (!isDebug()) {
-                    Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", FoursquareUtils.getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
+                    Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", FoursquareUtils.getLatLon(venue), 1.0, 0.0, 1.0);
                     if (checkinResult.getMeta().getCode() != 200) {
                         System.out.println("checkin error: " + checkinResult.getMeta().getErrorDetail() + "(" + checkinResult.getMeta().getErrorType() + ")");
                     } else

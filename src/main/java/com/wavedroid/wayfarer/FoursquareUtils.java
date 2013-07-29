@@ -256,15 +256,6 @@ public class FoursquareUtils {
         return city;
     }
 
-    public static String getLatLon(CompactVenue venue, double latOffset, double lonOffset) {
-        if (venue == null) return "";
-        Location loc = venue.getLocation();
-        if (loc == null) return "";
-        if (loc.getLat() == null) return "";
-        if (loc.getLng() == null) return "";
-        return ((loc.getLat() + latOffset) + "," + (loc.getLng() + lonOffset));
-    }
-
     public static String printVenue(CompactVenue venue) {
         Location loc = venue.getLocation();
         if (loc == null) return venue.getName();
@@ -274,5 +265,20 @@ public class FoursquareUtils {
     public static void main(String args[]) {
         log.debug(findCity("69.878729931068584,38.352887588814184"));
     }
+
+
+    public static String getLatLon(CompactVenue venue) {
+        return getLatLon(venue, 0.0, 0.0);
+    }
+
+    public static String getLatLon(CompactVenue venue, double latOffset, double lonOffset) {
+        if (venue == null) return "";
+        Location loc = venue.getLocation();
+        if (loc == null) return "";
+        if (loc.getLat() == null) return "";
+        if (loc.getLng() == null) return "";
+        return ((loc.getLat() + latOffset) + "," + (loc.getLng() + lonOffset));
+    }
+
 
 }

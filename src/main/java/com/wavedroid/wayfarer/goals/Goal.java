@@ -8,7 +8,9 @@ import fi.foyt.foursquare.api.entities.CompactVenue;
 public interface Goal {
 
     boolean isComplete(CompactVenue venue);
+
     String completionMessage();
+
     String failureMessage();
 
 }

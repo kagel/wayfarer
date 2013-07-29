@@ -1,5 +1,7 @@
 package com.wavedroid.wayfarer;
 
+import com.wavedroid.wayfarer.filters.NeverRepeatYourself;
+import com.wavedroid.wayfarer.filters.VenueFilter;
 import com.wavedroid.wayfarer.goals.Death;
 import com.wavedroid.wayfarer.manners.Straightforward;
 import fi.foyt.foursquare.api.FoursquareApiException;
@@ -10,6 +12,10 @@ import fi.foyt.foursquare.api.FoursquareApiException;
 public class WayfarerLauncher {
 
     public static void main(String[] args) throws FoursquareApiException, InterruptedException {
-        Wayfarer.start(new Death(), new Straightforward());
+        Wayfarer.start(
+                new Death(),
+                new Straightforward(new VenueFilter[]{
+                        new NeverRepeatYourself()
+                }));
     }
 }
