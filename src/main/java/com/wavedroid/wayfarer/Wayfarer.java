@@ -3,6 +3,7 @@ package com.wavedroid.wayfarer;
 import java.util.Random;
 
 import com.wavedroid.wayfarer.goals.Goal;
+import com.wavedroid.wayfarer.manners.Manner;
 import com.wavedroid.wayfarer.strategies.Strategy;
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
@@ -25,7 +26,7 @@ import static com.wavedroid.wayfarer.WayfarerProperties.isDebug;
 public class Wayfarer {
 
 
-    public static void start(Goal goal, Strategy strategy) throws FoursquareApiException, InterruptedException {
+    public static void start(Goal goal, Manner manner) throws FoursquareApiException, InterruptedException {
 
         double latOffset = 0.005;
         double lonOffset = 0.005;
@@ -46,6 +47,7 @@ public class Wayfarer {
         try {
             while (!goal.isComplete(venue)) {
 
+                Strategy strategy = manner.getStrategy();
                 venue = strategy.nextVenue(api, venue, latOffset, lonOffset, 0);
 
                 if (!isDebug()) {
