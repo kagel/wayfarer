@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.wavedroid.wayfarer.goals.Goal;
 import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
@@ -30,7 +31,7 @@ public class Wayfarer {
     private static final Set<String> cache = new HashSet<>();
 
 
-    public static void main(String[] args) throws FoursquareApiException, InterruptedException {
+    public static void start(Goal goal) throws FoursquareApiException, InterruptedException {
 
         double latOffset = 0.005;
         double lonOffset = 0.005;
@@ -48,22 +49,26 @@ public class Wayfarer {
         }
 
         Random rnd = new Random(Math.abs(Wayfarer.class.hashCode()));
-        while (!Thread.interrupted()) {
+        try {
+            while (!goal.isComplete(venue)) {
 
-            venue = nextVenue(api, venue, latOffset, lonOffset, 0);
+                venue = nextVenue(api, venue, latOffset, lonOffset, 0);
 
-            if (!isDebug()) {
-                Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
-                if (checkinResult.getMeta().getCode() != 200) {
-                    System.out.println("checkin error: " + checkinResult.getMeta().getErrorDetail() + "(" + checkinResult.getMeta().getErrorType() + ")");
-                } else
-                    cache.add(venue.getId());
+                if (!isDebug()) {
+                    Result<Checkin> checkinResult = api.checkinsAdd(venue.getId(), null, null, "public", getLatLon(venue, 0.0, 0.0), 1.0, 0.0, 1.0);
+                    if (checkinResult.getMeta().getCode() != 200) {
+                        System.out.println("checkin error: " + checkinResult.getMeta().getErrorDetail() + "(" + checkinResult.getMeta().getErrorType() + ")");
+                    } else
+                        cache.add(venue.getId());
+                }
+
+                if (!isDebug())
+                    Thread.sleep(rnd.nextInt(2880000) + 720000);
             }
-
-            if (!isDebug())
-                Thread.sleep(rnd.nextInt(2880000) + 720000);
+            System.out.println(goal.completionMessage());
+        } catch (Throwable t) {
+            System.out.println(goal.failureMessage());
         }
-        System.out.println("Starved to death :(");
     }
 
     private static CompleteVenue nextVenue(FoursquareApi api, CompactVenue venue, double latOffset, double lonOffset, int counter) throws FoursquareApiException {
