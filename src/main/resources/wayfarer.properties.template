@@ -5,3 +5,8 @@ accessToken=
 redirectUrl=
 startVenueId=
 userId=
+
+
+#HomeAlone settings
+homeVenues.1=
+homeVenues.2=

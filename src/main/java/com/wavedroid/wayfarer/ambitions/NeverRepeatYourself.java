@@ -1,18 +1,19 @@
 package com.wavedroid.wayfarer.ambitions;
 
 import com.wavedroid.wayfarer.CheckinsCache;
-import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
 import fi.foyt.foursquare.api.entities.CompactVenue;
 import fi.foyt.foursquare.api.entities.CompleteVenue;
+
+import static com.wavedroid.wayfarer.FoursquareApiWrapper.api;
 
 /**
  * @author DKhvatov
  */
 public class NeverRepeatYourself implements Ambition {
     @Override
-    public boolean fulfill(FoursquareApi api, CompactVenue venue) throws FoursquareApiException {
+    public boolean fulfill(CompactVenue venue) throws FoursquareApiException {
         if (CheckinsCache.instance.contains(venue.getId())) return false;
         Result<CompleteVenue> venueResult = api.venue(venue.getId());
         if (venueResult == null) return false;

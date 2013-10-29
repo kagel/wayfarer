@@ -19,4 +19,9 @@ public class Straightforward implements Manner {
     public Strategy getStrategy() {
         return new NorthEast(ambitions);
     }
+
+    @Override
+    public int getDelay() {
+        return 2880000;
+    }
 }

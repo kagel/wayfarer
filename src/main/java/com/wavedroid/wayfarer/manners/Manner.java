@@ -9,4 +9,6 @@ public interface Manner {
 
     Strategy getStrategy();
 
+    int getDelay();
+
 }

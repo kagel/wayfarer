@@ -72,7 +72,7 @@ public class FoursquareUtils {
         return api.checkin(checkinId, signature);
     }
 
-    public static Checkin getLastCheckin(FoursquareApi api, String userId) throws FoursquareApiException {
+    public static Checkin getLastCheckin(FoursquareApiWrapper api, String userId) throws FoursquareApiException {
 
         int days = -1;
         log.debug("Getting last checkin for last " + Math.abs(days) + " day(s)");
@@ -91,7 +91,7 @@ public class FoursquareUtils {
         return checkins[0];
     }
 
-    public static Checkin[] getLastCheckins(FoursquareApi api, String userId, int limit, int days) throws FoursquareApiException {
+    public static Checkin[] getLastCheckins(FoursquareApiWrapper api, String userId, int limit, int days) throws FoursquareApiException {
 
         Date now = new Date();
 
@@ -123,11 +123,11 @@ public class FoursquareUtils {
         return limited;
     }
 
-    public static Checkin[] getLastCheckins(FoursquareApi api, String userId, int limit) throws FoursquareApiException {
+    public static Checkin[] getLastCheckins(FoursquareApiWrapper api, String userId, int limit) throws FoursquareApiException {
         return getLastCheckins(api, userId, limit, -7);
     }
 
-    public static Checkin[] getLastCheckins(FoursquareApi api, String userId, Date since) throws FoursquareApiException {
+    public static Checkin[] getLastCheckins(FoursquareApiWrapper api, String userId, Date since) throws FoursquareApiException {
         Result<CheckinGroup> result;
         result = api.usersCheckins(userId, 500, 0, since.getTime() / 1000, 999999999999L);
 

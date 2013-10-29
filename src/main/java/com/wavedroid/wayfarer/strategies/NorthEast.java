@@ -1,8 +1,8 @@
 package com.wavedroid.wayfarer.strategies;
 
+import com.wavedroid.wayfarer.FoursquareApiWrapper;
 import com.wavedroid.wayfarer.FoursquareUtils;
 import com.wavedroid.wayfarer.ambitions.Ambition;
-import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
 import fi.foyt.foursquare.api.entities.CompactVenue;
@@ -18,7 +18,8 @@ public class NorthEast extends SelectiveStrategy {
     }
 
     @Override
-    protected CompactVenue[] nextVenues(FoursquareApi api, CompactVenue venue, int counter, double latOffset, double lonOffset) throws FoursquareApiException {
+    protected CompactVenue[] nextVenues(CompactVenue venue, int counter, double latOffset, double lonOffset) throws FoursquareApiException {
+        FoursquareApiWrapper api = FoursquareApiWrapper.api;
         String ll = FoursquareUtils.getLatLon(venue, latOffset, lonOffset);
         Result<VenuesSearchResult> vsr = api.venuesSearch(ll, 1.0, 0.0, 1.0, "", 50, "checkin", null, null, null, null);
         VenuesSearchResult searchResult = vsr.getResult();
@@ -28,7 +29,7 @@ public class NorthEast extends SelectiveStrategy {
                 Thread.sleep(10000 * counter);
             } catch (InterruptedException ignored) {
             }
-            return nextVenues(api, venue, ++counter, latOffset, lonOffset);
+            return nextVenues(venue, ++counter, latOffset, lonOffset);
         }
         CompactVenue[] venues = searchResult.getVenues();
 
@@ -38,7 +39,7 @@ public class NorthEast extends SelectiveStrategy {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
             }
-            return nextVenues(api, venue, ++counter, latOffset * 1.25, lonOffset * 1.25);
+            return nextVenues(venue, ++counter, latOffset * 1.25, lonOffset * 1.25);
         }
         return venues;
     }
